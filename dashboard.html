@@ -1,0 +1,142 @@
+{% macro code_definition(code) %}
+    {% set defs = {
+        '200': 'OK: The request has succeeded.',
+        '301': 'Moved Permanently: The resource has been moved.',
+        '400': 'Bad Request: The server could not understand the request.',
+        '401': 'Unauthorized: Authentication is required.',
+        '403': 'Forbidden: Server refuses to fulfill the request.',
+        '404': 'Not Found: The requested resource could not be found.',
+        '500': 'Internal Server Error: The server encountered an error.',
+        'ERR': 'Error: Could not get response code.'
+    } %}
+    {{ defs[code|string] if code|string in defs else 'Unknown code' }}
+{% endmacro %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% macro code_definition(code) %}
+        {% set defs = {
+            '200': 'OK: The request has succeeded.',
+            '301': 'Moved Permanently: The resource has been moved.',
+            '400': 'Bad Request: The server could not understand the request.',
+            '401': 'Unauthorized: Authentication is required.',
+            '403': 'Forbidden: Server refuses to fulfill the request.',
+            '404': 'Not Found: The requested resource could not be found.',
+            '500': 'Internal Server Error: The server encountered an error.',
+            'ERR': 'Error: Could not get response code.'
+        } %}
+        {{ defs[code|string] if code|string in defs else 'Unknown code' }}
+    {% endmacro %}
+    <meta charset="UTF-8">
+    <title>Screenshots</title>
+    <style>
+        .screenshot-img-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* .screenshot-img-wrapper img {
+            max-width: 140px;
+            max-height: 110px;
+            display: block;
+            margin: 0;
+            border-radius: 4px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+            object-fit: contain;
+            transition: box-shadow 0.2s, transform 0.2s;
+            cursor: pointer;
+            z-index: 1;
+        } */
+
+        .screenshot:hover .screenshot-img-wrapper img {
+            position: absolute;
+            top: 200%;
+            left: 100%;
+            transform: translate(-50%, -50%) scale(1.5);
+            max-width: 300px;
+            max-height: 250px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+            background: #fff;
+            border: 2px solid #1976d2;
+            z-index: 10;
+        }
+        body { font-family: Arial, sans-serif; background: #f8f8f8; }
+        h1 { text-align: center; }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 0;
+        }
+        .screenshot {
+            background: #fff;
+            padding: 2px 4px 8px 4px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: box-shadow 0.2s, transform 0.2s;
+            outline: none;
+        }
+        .screenshot:focus,
+        .screenshot:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+            transform: translateY(-2px) scale(1.5);
+        }
+        .screenshot img {
+            max-width: 140px;
+            max-height: 110px;
+            display: block;
+            margin: 0 auto 4px auto;
+            border-radius: 4px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+            object-fit: contain;
+        }
+        .screenshot p {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 15px;
+            color: #444;
+        }
+        .screenshot a {
+            display: block;
+            text-align: center;
+            color: #1976d2;
+            text-decoration: none;
+            font-size: 13px;
+            margin-bottom: 2px;
+            word-break: break-all;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .screenshot a:focus,
+        .screenshot a:hover {
+            text-decoration: underline;
+            color: #0d47a1;
+        }
+        @media (max-width: 600px) {
+            .gallery { gap: 12px; padding: 8px; }
+            .screenshot img { max-width: 80px; max-height: 60px; }
+        }
+    </style>
+</head>
+<body>
+    <p align="center">URL Screenshots</p>
+    <div class="gallery">
+        {% for item in screenshot_data %}
+        <div class="screenshot" tabindex="0" aria-label="Screenshot for {{ item.code }}">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; margin-bottom: 2px;">
+                <span style="font-weight:bold; color:#c00;" aria-label="Code" title="{{ code_definition(item.code) }}">{{ item.code }}</span>
+                <a href="{{ item.url }}" target="_blank" rel="noopener" aria-label="Open URL for {{ item.code }}">
+                    {{ item.url|replace('https://','')|replace('http://','')|truncate(32, True, '...') }}
+                </a>
+            </div>
+            <div class="screenshot-img-wrapper">
+                <img src="/uploads/{{ item.img }}" alt="Screenshot for {{ item.code }}" loading="lazy">
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
